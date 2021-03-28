@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Document</title>
+  </head>
+  <body>
+    <form>
+      <input type="text" id="roll" /><br />
+      <input type="button" onclick="roll_no()" value="SEND" />
+    </form>
+    <table border=1>
+      <thead>
+        <th>Roll Number</th>
+        <th>Result</th>
+      </thead>
+      <tbody id="data"></tbody>
+    </table>
+    <script>
+      var brr=[];
+      async function roll_no() {
+        var str = "";
+        var roll = document.getElementById("roll").value;
+        var arr = roll.split(",");
+        await send_data(arr);
+        var obj=brr[0];
+        for (const key in obj) {
+          str += `<tr><td>${key}</td><td>${obj[key]}</td></tr>`;
+        }
+        document.getElementById("data").innerHTML=str;
+      }
+      async function send_data(data) {
+        await fetch("http://localhost:5000/exportdata", {
+          method: "POST", // or 'PUT'
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            brr=data;
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
+  </body>
+</html>
